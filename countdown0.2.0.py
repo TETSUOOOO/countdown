@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 # LINUXPLORE - A game that demonstrates linux command-line knowledge!
 
-import time, math, sys, os, pprint
+import time, math, sys, os, pprint, re
 from subprocess import call
 
 # Globals
@@ -22,6 +22,7 @@ users = [] # Stores user accounts for high score in file 'userfile.py'
 # TODO: refactor score function
 # TODO: Read and write to where several user accounts are saved to the userlist.py file
 # TODO: Format users arrays in userlist.py where each iteration of write will create a unique, sequentual variable name (i.e. 'usersx'), where x is any positive integer
+# TODO: Fix error with unhashable type error with dictionary in userlist.py
 
 def elapsedTime(u):
 
@@ -43,14 +44,20 @@ def elapsedTime(u):
 def highScore():
     
     userFile = open('userfile.py', 'a')
-    userFile.write('users = ' + pprint.pformat(users) + '\n')
+    appendedFile = userFile.write(pprint.pformat(users) + ',\n' + '}')
     userFile.close()
     import userfile
+    closeRedEx = re.compile(r'\W\W\W*')
+    closeObject = closeRedEx.sub('}', appendedUser)
     tableHeader = 'HIGHSCORE'.center(40, '=')
     print(tableHeader)
     tableLength = len(tableHeader)
-    leftPrint = str(userfile.users[0]['Username']) + '\t' + str(userfile.users[0]['Points'])
-    print(leftPrint.ljust(tableLength))
+    print(closeObject)
+    
+        
+#    leftPrint = str(userfile.users[i][j]) + '\t' + str(userfile.users[i][j])
+#    print(leftPrint.ljust(tableLength))
+    
     
 def scoreDisplay(userScore):
     for k, v in userScore.items():
