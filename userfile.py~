@@ -1,0 +1,3 @@
+[{'Points': 10, 'Username': 'Tom'}]
+[{'Points': 10, 'Username': 'Tom'}]
+users = [{'Points': 10, 'Username': 'Tom'}]

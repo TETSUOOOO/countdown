@@ -6,19 +6,22 @@ from subprocess import call
 
 # Globals
 
+p = 'Points'
 prompt = ['You are the sole remaining survivor on an abandoned space vessel after being attacked by beligerent Windows Users...', 'You have made haste to the nearest terminal that dismantles an escape craft...', 'The only catch is that you must maneuver through murky linux commands to find the unlocking mechanism!', 'You must use the Bourne-Again Shell (bash) and conjure any inkling of knowledge in order to proceed to the escape craft!', 'Good luck or good day, space cadet!\n']
 prompt_two = 'You have one minute before the atmosphere leaks into the vessel!'
 users_list = {'Username': '', 'Points': 0}
-record = []
+record = [] # Appends 'Points' or removes 'Points' accordingly
 response = ''
-users = []
+users = [] # Stores user accounts for high score in file 'userfile.py'                                          
+
+### Program addendums/notes:
+
+# NOTE: 'time.sleep()' methods commented out in userInfo module for debugging purposes
 
 # TODO: factor negative points upon answering challenge question incorrectly
 # TODO: refactor score function
-# TODO: Only display user score at end of game
-# TODO: fix while loop for game module to properly exit game and utilize 'scoreDisplay(score)' in main
-# TODO: Read and write to a file to save user name and score
-
+# TODO: Read and write to where several user accounts are saved to the userlist.py file
+# TODO: Format users arrays in userlist.py where each iteration of write will create a unique, sequentual variable name (i.e. 'usersx'), where x is any positive integer
 
 def elapsedTime(u):
 
@@ -34,47 +37,31 @@ def elapsedTime(u):
         print('Time has run out!\nGame Over!')
         sys.exit()
     print('\nYour remaining time is {0} minutes and {1} seconds'.format(secondMinute[0], secondMinute[1]))
-    new_points = 'Points'
-    record.append(new_points)
     score = userUpdate(users_list, record)
     scoreDisplay(score)
-           
-def userInfo():
-    users_list['Username'] = input('\nType Username> ')    
-    print('Greetings, ' + str(users_list['Username']) + '!')
-    print('Your score is ' + str(users_list['Points']))
+
+def highScore():
     
-#NOTE: Character cycle only works in Python IDLE Shell - it's a bug!
-
-    for i in prompt:
-        for char in i:
-            print(char, end='')
-            time.sleep(0.05)
-        time.sleep(4)
-        print('\n')
-
-def userUpdate(player, factor):
-    tmp = player
-    for i in factor:
-        tmp.setdefault(i, 0)
-        tmp[i] += 1
-    return tmp
-   
+    userFile = open('userfile.py', 'a')
+    userFile.write('users = ' + pprint.pformat(users) + '\n')
+    userFile.close()
+    import userfile
+    tableHeader = 'HIGHSCORE'.center(40, '=')
+    print(tableHeader)
+    tableLength = len(tableHeader)
+    leftPrint = str(userfile.users[0]['Username']) + '\t' + str(userfile.users[0]['Points'])
+    print(leftPrint.ljust(tableLength))
+    
 def scoreDisplay(userScore):
-    print('Score:'.center(40, '~'))
     for k, v in userScore.items():
         userScore.setdefault(k, 0)
-        print(str(k) + ' ' + str(v))
-    
-def userContinue(r):
-    print('You are out of tries! Continue? (y/n)')
-    r = input()
-    if r == 'y':
-        userAwait()
-        countdownGame()
-    elif r == 'n':
-        print('Thank you for playing!')
-        sys.exit()
+        print(str(k) + ': ' + str(v))
+
+def tryRemove():
+    try:
+        record.remove('Points')
+    except ValueError:
+        print('Oh no! No points!')
 
 def userAwait():
     ready = input('Are you ready? (y/n) or \'q\' for quit\n')
@@ -89,7 +76,38 @@ def userAwait():
     elif ready == 'q':
         print('Okay, goodbye ' + str(users_list['Username']) + '\n')
         sys.exit()
-               
+
+def userContinue(r):
+    print('You are out of tries! Continue? (y/n)')
+    r = input()
+    if r == 'y':
+        userAwait()
+        countdownGame()
+    elif r == 'n':
+        print('Thank you for playing!')
+        sys.exit()
+
+#NOTE: Character cycle only works in Python IDLE Shell - it's a bug!
+def userInfo():
+    users_list['Username'] = input('\nType Username> ')    
+    print('Greetings, ' + str(users_list['Username']) + '!')
+    print('Your score is ' + str(users_list['Points']))
+    users.append(users_list)
+
+    for i in prompt:
+        for char in i:
+            print(char, end='')
+           # time.sleep(0.05)
+       # time.sleep(4)
+        print('\n')
+
+def userUpdate(player, factor):
+    tmp = player
+    for i in factor:
+        tmp.setdefault(i, 0)
+        tmp[i] += 1
+    return tmp
+   
 # Game module
 def countdownGame():
     active = True
@@ -108,6 +126,7 @@ def countdownGame():
             if challenge.lower() == 'c':
                 print('Success! You have entered \'pwd\' for \'print working directory\'!\n')
                 call(["pwd"])
+                record.append(p)
                 elapsedTime(start)
             else:
                 turn -= 1
@@ -116,10 +135,12 @@ def countdownGame():
                 else:
                     if turn == 1:
                         print('Please try again. You have ' + str(turn) + ' try remaining!\n')
+                        tryRemove()
                         elapsedTime(start)
                         continue
                     else:
                         print('Please try again. You have ' + str(turn) + ' tries remaining!\n')
+                        tryRemove()
                         elapsedTime(start)
                         continue 
         
@@ -131,6 +152,7 @@ def countdownGame():
             if challenge.lower() == 'b':
                 call(["free"])
                 print('Hey, you did it, space cadet... that sounded diminutive. SORRY.\n')
+                record.append(p)
                 elapsedTime(start)
             else:
                 turn -= 1
@@ -139,10 +161,12 @@ def countdownGame():
                 else:
                     if turn == 1:
                         print('Please try again. You have ' + str(turn) + ' try remaining!\n')
+                        tryRemove()
                         elapsedTime(start)
                         continue
                     else:
                         print('Please try again.\nYou have ' + str(turn) + ' tries remaining!\n')
+                        tryRemove()
                         elapsedTime(start)
                         continue    
 
@@ -154,6 +178,7 @@ def countdownGame():
             if challenge.lower() == 'c':
                 call(["ls", "-l"])
                 print('I see what you did there, and it\'s amazing!')
+                record.append(p)
                 elapsedTime(start)
             else:
                 turn -= 1
@@ -162,10 +187,12 @@ def countdownGame():
                 else:
                     if turn == 1:
                         print('Please try again. You have ' + str(turn) + ' try remaining!\n')
+                        tryRemove()
                         elapsedTime(start)
                         continue
                     else:
                         print('Please try again.\nYou have ' + str(turn) + ' tries remaining!\n')
+                        tryRemove()
                         elapsedTime(start)
                         continue
                     
@@ -176,6 +203,7 @@ def countdownGame():
             challenge = input()
             if challenge.lower() == 'c':
                 print('BINGO was his name-o!')
+                record.append(p)
                 elapsedTime(start)
             else:
                 turn -= 1
@@ -184,18 +212,19 @@ def countdownGame():
                 else:
                     if turn == 1:
                         print('Please try again. You have ' + str(turn) + ' try remaining!\n')
+                        tryRemove()
                         elapsedTime(start)
                         continue
                     else:
                         print('Please try again. You have ' + str(turn) + ' tries remaining!\n')
+                        tryRemove()
                         elapsedTime(start)
                         continue
             active = False
         turn = 0
     print('You win!')
-    for x in userList.users:
-        print(x)
-   
+    highScore()
+    
 if __name__ == '__main__':
     
     print('Welcome to \'LINUXPLORE\''.center(40, '~') + '\n')
