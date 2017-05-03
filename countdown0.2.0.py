@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 # LINUXPLORE - A game that demonstrates linux command-line knowledge!
 
-import time, math, sys, os, pprint, re
+import time, math, sys, os, pprint, re, userfile
 from subprocess import call
 
 # Globals
@@ -9,20 +9,19 @@ from subprocess import call
 p = 'Points'
 prompt = ['You are the sole remaining survivor on an abandoned space vessel after being attacked by beligerent Windows Users...', 'You have made haste to the nearest terminal that dismantles an escape craft...', 'The only catch is that you must maneuver through murky linux commands to find the unlocking mechanism!', 'You must use the Bourne-Again Shell (bash) and conjure any inkling of knowledge in order to proceed to the escape craft!', 'Good luck or good day, space cadet!\n']
 prompt_two = 'You have one minute before the atmosphere leaks into the vessel!'
-users_list = {'Username': '', 'Points': 0}
-record = [] # Appends 'Points' or removes 'Points' accordingly
+users_list = {'Username': '', 'Points': 0}  # Appends dictionaries of users into an accounts list from userfile.py
+record = []                                 # Appends 'Points' or removes 'Points' accordingly
 response = ''
-users = [] # Stores user accounts for high score in file 'userfile.py'                                          
 
 ### Program addendums/notes:
 
 # NOTE: 'time.sleep()' methods commented out in userInfo module for debugging purposes
 
+# TODO: game module loops twice, then exits
 # TODO: factor negative points upon answering challenge question incorrectly
 # TODO: refactor score function
 # TODO: Read and write to where several user accounts are saved to the userlist.py file
-# TODO: Format users arrays in userlist.py where each iteration of write will create a unique, sequentual variable name (i.e. 'usersx'), where x is any positive integer
-# TODO: Fix error with unhashable type error with dictionary in userlist.py
+
 
 def elapsedTime(u):
 
@@ -43,15 +42,10 @@ def elapsedTime(u):
 
 def highScore():
     
-    userFile = open('userfile.py', 'a')
-    userFile.write('player = ' + pprint.pformat(users) + '\n')
-    userFile.close()
-    import userfile
     tableHeader = 'HIGHSCORE'.center(40, '=')
     print(tableHeader)
     tableLength = len(tableHeader)
-    player1 = '%s\'s score is %d points!\n' % (userfile.player[0]['Username'], userfile.player[0]['Points'])
-    print(player1.ljust(tableLength))
+    print('%s\'s score is %d points!\n' % (userfile.accounts[0]['Username'], userfile.accounts[0]['Points']))
 
 def scoreDisplay(userScore):
     for k, v in userScore.items():
@@ -89,12 +83,14 @@ def userContinue(r):
         sys.exit()
 
 #NOTE: Character cycle only works in Python IDLE Shell - it's a bug!
+#TODO: Find way to manipulate input into the userlist.py file directly with the name.write() module
+
 def userInfo():
     users_list['Username'] = input('\nType Username> ')    
     print('Greetings, ' + str(users_list['Username']) + '!')
     print('Your score is ' + str(users_list['Points']))
-    users.append(users_list)
-
+    userfile.accounts.append(users_list)
+   
     for i in prompt:
         for char in i:
             print(char, end='')
