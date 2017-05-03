@@ -44,21 +44,15 @@ def elapsedTime(u):
 def highScore():
     
     userFile = open('userfile.py', 'a')
-    appendedFile = userFile.write(pprint.pformat(users) + ',\n' + '}')
+    userFile.write('player = ' + pprint.pformat(users) + '\n')
     userFile.close()
     import userfile
-    closeRedEx = re.compile(r'\W\W\W*')
-    closeObject = closeRedEx.sub('}', appendedUser)
     tableHeader = 'HIGHSCORE'.center(40, '=')
     print(tableHeader)
     tableLength = len(tableHeader)
-    print(closeObject)
-    
-        
-#    leftPrint = str(userfile.users[i][j]) + '\t' + str(userfile.users[i][j])
-#    print(leftPrint.ljust(tableLength))
-    
-    
+    player1 = '%s\'s score is %d points!\n' % (userfile.player[0]['Username'], userfile.player[0]['Points'])
+    print(player1.ljust(tableLength))
+
 def scoreDisplay(userScore):
     for k, v in userScore.items():
         userScore.setdefault(k, 0)
@@ -238,6 +232,7 @@ if __name__ == '__main__':
     userInfo()
     userAwait()
     countdownGame()
+    
    
     
     
