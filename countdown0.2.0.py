@@ -42,23 +42,22 @@ def elapsedTime(t):
     score = userUpdate(users_list, record)
     scoreDisplay(score)
 
-def feedJson(user, points):
-    newEntry = str(user) + ' ' + str(points)
-    with open(userDataFile, mode='r', encoding='utf-8') as feedsjson:
-        feeds = json.load(feedsjson)
-    with open(userDataFile, mode='w', encoding='utf-8') as f:
+def feedJson():
+    with open(userDataFile, 'w') as f:
         json.dump([], f)
-    with open(userDataFile, mode='a', encoding='utf-8') as feedsjson:
-        entry = users_list
-        feeds.append(entry)
+    with open(userDataFile, 'r') as feedsjson:
+        feeds = json.load(feedsjson)
+    with open(userDataFile, 'w') as feedsjson:
+        feeds.append(users_list)
         json.dump(feeds, feedsjson)
     with open(userDataFile, 'r') as read_obj:
         content = read_obj.read()
-    loadRead = json.load(content)
-    entryRegEx = re.compile(r'[a-zA-Z0-9]+\s?[a-zA-Z0-9]?\s+\d+')
-    mo = entryRegEx.findall(loadRead)
-    for objects in mo:
-        print(objects, end='')
+    entryRegEx = re.compile(r'\W{1}[a-zA-Z]{8}\W+\s{1}\W{1}[a-zA-Z0-9]+\s?[a-zA-Z0-9]?\W+\s{1}\W{1}[a-zA-Z]{6}\W+\s{1}\d+')
+    foundObjects = entryRegEx.findall(content)
+    for objects in foundObjects:
+        for k, v in objects:
+            print(str(v) + ' ' + str(k))
+        print('\n')
     print('\n')
 
 def highScore():
@@ -66,7 +65,7 @@ def highScore():
     tableHeader = 'HIGHSCORE'.center(40, '=')
     print(tableHeader)
     tableLength = len(tableHeader)
-    feedJson(users_list['Username'], users_list['Points'])
+    feedJson()
 
 def scoreDisplay(userScore):
     '''After each question, function displays username and points'''
