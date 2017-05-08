@@ -1,17 +1,19 @@
 #! /usr/bin/python3
+
 # LINUXPLORE - A game that demonstrates linux command-line knowledge!
 
-import time, math, sys, os, pprint, re, userfile
+import time, math, sys, os, pprint, re, json
 from subprocess import call
 
 # Globals
 
 p = 'Points'
-prompt = ['You are the sole remaining survivor on an abandoned space vessel after being attacked by beligerent Windows Users...', 'You have made haste to the nearest terminal that dismantles an escape craft...', 'The only catch is that you must maneuver through murky linux commands to find the unlocking mechanism!', 'You must use the Bourne-Again Shell (bash) and conjure any inkling of knowledge in order to proceed to the escape craft!', 'Good luck or good day, space cadet!\n']
+prompt = ['You are the sole remaining survivor on an abandoned space vessel after being attacked by beligerent Windows Users...', 'You have made haste to the nearest terminal that dismantles an escape craft...', 'The only catch is that you must maneuver through murky linux commands to find the unlocking mechanism!', 'You must use the Bourne-Again Shell (bash) and conjure any inkling of knowledge in order to proceed to the escape craft!', 'Thanks for boarding Elon Musk\'s Enceledus Cruise... have a great weekend.']
 prompt_two = 'You have one minute before the atmosphere leaks into the vessel!'
-users_list = {'Username': '', 'Points': 0}  # Appends dictionaries of users into an accounts list from userfile.py
-record = []                                 # Appends 'Points' or removes 'Points' accordingly
+users_list = {'Username': '', 'Points': 0}                                          # Contents for user data to keep track of user accounts and respective scores
+record = []                                                                         # empty list that helps append 'Points' or remove 'Points' accordingly
 response = ''
+userDataFile = 'userData.json'
 
 ### Program addendums/notes:
 
@@ -20,13 +22,13 @@ response = ''
 # TODO: game module loops twice, then exits
 # TODO: factor negative points upon answering challenge question incorrectly
 # TODO: refactor score function
-# TODO: Read and write to where several user accounts are saved to the userlist.py file
+# TODO: Read and write to where several user accounts are saved to the userlist.json file
+# TODO: Create regex for matching user names and points within json file for json.load(x)
 
-
-def elapsedTime(u):
-
+def elapsedTime(t):
+    '''Keeps track of the time remaining for the player'''
     secondMinute = []
-    elap = time.time() - u
+    elap = time.time() - t
     remain = 60 - round(elap)
     min_remain = remain / 60
     m = math.floor(min_remain)
@@ -40,25 +42,47 @@ def elapsedTime(u):
     score = userUpdate(users_list, record)
     scoreDisplay(score)
 
+def feedJson(user, points):
+    newEntry = str(user) + ' ' + str(points)
+    with open(userDataFile, mode='r', encoding='utf-8') as feedsjson:
+        feeds = json.load(feedsjson)
+    with open(userDataFile, mode='w', encoding='utf-8') as f:
+        json.dump([], f)
+    with open(userDataFile, mode='a', encoding='utf-8') as feedsjson:
+        entry = users_list
+        feeds.append(entry)
+        json.dump(feeds, feedsjson)
+    with open(userDataFile, 'r') as read_obj:
+        content = read_obj.read()
+    loadRead = json.load(content)
+    entryRegEx = re.compile(r'[a-zA-Z0-9]+\s?[a-zA-Z0-9]?\s+\d+')
+    mo = entryRegEx.findall(loadRead)
+    for objects in mo:
+        print(objects, end='')
+    print('\n')
+
 def highScore():
-    
+    '''Should display the top 10 high scores loaded into a json file'''
     tableHeader = 'HIGHSCORE'.center(40, '=')
     print(tableHeader)
     tableLength = len(tableHeader)
-    print('%s\'s score is %d points!\n' % (userfile.accounts[0]['Username'], userfile.accounts[0]['Points']))
+    feedJson(users_list['Username'], users_list['Points'])
 
 def scoreDisplay(userScore):
+    '''After each question, function displays username and points'''
     for k, v in userScore.items():
         userScore.setdefault(k, 0)
         print(str(k) + ': ' + str(v))
 
 def tryRemove():
+    '''Decrements points from user upon incorrect answers'''
     try:
         record.remove('Points')
     except ValueError:
         print('Oh no! No points!')
 
 def userAwait():
+    '''Menu that asks user if they are ready'''
     ready = input('Are you ready? (y/n) or \'q\' for quit\n')
     if ready == 'n':
         print('No problem...')
@@ -73,6 +97,7 @@ def userAwait():
         sys.exit()
 
 def userContinue(r):
+    '''Asks user if they want to try again'''
     print('You are out of tries! Continue? (y/n)')
     r = input()
     if r == 'y':
@@ -83,16 +108,14 @@ def userContinue(r):
         sys.exit()
 
 #NOTE: Character cycle only works in Python IDLE Shell - it's a bug!
-#TODO: Find way to manipulate input into the userlist.py file directly with the name.write() module
 
 def userInfo():
+    '''Should append username and points into empty global array users_list'''
     users_list['Username'] = input('\nType Username> ')    
     print('Greetings, ' + str(users_list['Username']) + '!')
     print('Your score is ' + str(users_list['Points']))
-    userfile.accounts.append(users_list)
-   
-    for i in prompt:
-        for char in i:
+    for prompts in prompt:
+        for char in prompts:
             print(char, end='')
            # time.sleep(0.05)
        # time.sleep(4)
@@ -107,6 +130,7 @@ def userUpdate(player, factor):
    
 # Game module
 def countdownGame():
+    '''Module with questions and function calls'''
     active = True
     response = ''
     start = time.time()
@@ -147,10 +171,16 @@ def countdownGame():
             print('C).    apropos')
             challenge = input()
             if challenge.lower() == 'b':
-                call(["free"])
-                print('Hey, you did it, space cadet... that sounded diminutive. SORRY.\n')
-                record.append(p)
-                elapsedTime(start)
+                try:
+                    call(["free"])
+                except FileNotFoundError:
+                    print('Way to go!\n')
+                    record.append(p)
+                    elapsedTime(start)
+                else:
+                    print('Way to go!\n')
+                    record.append(p)
+                    elapsedTime(start)
             else:
                 turn -= 1
                 if turn == 0:
