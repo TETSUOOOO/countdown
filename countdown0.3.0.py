@@ -27,6 +27,8 @@ userDataFile = 'userData.json'
 # TODO: Read and write to where several user accounts are saved to the userlist.json file
 # TODO: Create mission2
 
+# Functions/Modules
+
 def elapsedTime(t):
     '''Keeps track of the time remaining for the player'''
     secondMinute = []
@@ -278,7 +280,9 @@ def countdownGame():
                     tryRemove()
                     elapsedTime(start)
                     continue
-    
+
+# Main
+
 if __name__ == '__main__':
     
     print('Welcome to \'LINUXPLORE\''.center(40, '~') + '\n')
