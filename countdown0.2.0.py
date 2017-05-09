@@ -1,6 +1,10 @@
 #! /usr/bin/python3
 
 # LINUXPLORE - A game that demonstrates linux command-line knowledge!
+# The program has been tested using a python3 IDLE shell, a cygwin bash, and a Debian 8/Linux bash
+# This is an incomplete game with an abrupt finish upon completing the questionairre
+# If there are any issues, feel free to do a pull request or e-mail me at thomasavilela@gmail.com with the report of bug
+# HAVE FUN
 
 import time, math, sys, os, pprint, re, json
 from subprocess import call
