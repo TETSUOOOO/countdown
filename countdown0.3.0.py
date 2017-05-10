@@ -1,8 +1,12 @@
 #! /usr/bin/python3
 
-# LINUXPLORE - A game that demonstrates linux command-line knowledge!
+# LINUXPLORE - A game that demonstrates linux command-line knowledge! - Tope Technologies (c. 2017)
+# By Thomas Vilela and Christopher Short
+
+
+
 # The program has been tested using a python3 IDLE shell, a cygwin bash, and a Debian 8/Linux bash
-# This is an incomplete game with an abrupt finish upon completing the questionairre
+# This program will create folders into your directory if you are using a bash, including a .json file from the user input
 # If there are any issues, feel free to do a pull request or e-mail me at thomasavilela@gmail.com with the report of bug
 # HAVE FUN
 
@@ -22,6 +26,7 @@ userDataFile = 'userData.json'
 
 ### Program addendums/notes:
 
+# TODO: Syncronize midi sounds with prints of characters in list indices
 # TODO: factor negative points upon answering challenge question incorrectly
 # TODO: refactor score function
 # TODO: Read and write to where several user accounts are saved to the userlist.json file
